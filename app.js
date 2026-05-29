@@ -91,7 +91,7 @@ function renderSubtitle(text, ci, si) {
 
 function renderCard(item, ci, si, ii) {
     const domain = (() => { try { return new URL(item.url).hostname; } catch(e) { return ''; } })();
-    const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
+    const favicon = domain ? `https://favicon.im/${domain}` : '';
     return `<a href="${item.url}" target="_blank" rel="noopener" class="card">
         ${favicon ? `<img src="${favicon}" class="card-icon" alt="" onerror="this.style.display='none'">` : ''}
         <div class="card-name">${item.name}</div>
