@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DesignKit - DeepSeek 方案</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #F5F5F7;
+    color: #1d1d1f;
+    min-height: 100vh;
+}
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+    width: 260px;
+    background: #fff;
+    border-right: 1px solid #e5e5e7;
+    padding: 2rem 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 30;
+}
+.sidebar h1 { font-size: 1.4rem; font-weight: 700; padding: 0 0.8rem; margin-bottom: 1.5rem; }
+.sidebar-item {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.9rem;
+    color: #666;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.sidebar-item:hover { background: #f0f0f2; color: #1d1d1f; }
+.sidebar-item.active { background: #e8e8ed; color: #1d1d1f; font-weight: 500; }
+.main { margin-left: 260px; flex: 1; padding: 2rem; }
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.top-bar h2 { font-size: 1.5rem; font-weight: 600; }
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #e8e8ed;
+    color: #1d1d1f;
+}
+.btn:hover { background: #d8d8dd; }
+.btn-primary { background: #007AFF; color: #fff; }
+.btn-primary:hover { background: #0066d6; }
+.btn-danger { background: #FF3B30; color: #fff; }
+.btn-danger:hover { background: #d63029; }
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s;
+    position: relative;
+    cursor: pointer;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.card-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+.card-desc { font-size: 0.82rem; color: #86868b; line-height: 1.4; }
+.card-type-link .card-url { font-size: 0.75rem; color: #007AFF; margin-top: 0.5rem; word-break: break-all; }
+.card-type-copy { border-left: 3px solid #007AFF; }
+.card-type-copy .copy-hint { font-size: 0.75rem; color: #007AFF; margin-top: 0.5rem; }
+.card-type-memo { border-left: 3px solid #FF9500; }
+.card-actions {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    display: none;
+    gap: 0.4rem;
+}
+.editing .card-actions { display: flex; }
+.card-actions button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: #f0f0f2;
+    cursor: pointer;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-actions button:hover { background: #e0e0e5; }
+.copied-toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1d1d1f;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+.copied-toast.show { opacity: 1; }
+
+/* Add form */
+.add-form {
+    display: none;
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.add-form.visible { display: block; }
+.form-row { margin-bottom: 1rem; }
+.form-row label { display: block; font-size: 0.8rem; color: #86868b; margin-bottom: 0.3rem; }
+.form-row input, .form-row select, .form-row textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #e5e5e7;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: #007AFF; }
+.form-actions { display: flex; gap: 0.5rem; }
+
+/* Mobile */
+.mobile-nav { display: none; }
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 1rem; }
+    .mobile-nav {
+        display: block;
+        padding: 1rem;
+        background: #fff;
+        border-bottom: 1px solid #e5e5e7;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+    .mobile-nav select {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #e5e5e7;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+    .cards-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+
+/* Export/Import */
+.data-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding: 0 0.8rem; }
+.data-actions .btn { font-size: 0.75rem; padding: 0.4rem 0.7rem; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+    <aside class="sidebar" id="sidebar">
+        <h1>DesignKit</h1>
+        <div id="sidebar-cats"></div>
+        <div class="data-actions" id="data-actions" style="display:none;">
+            <button class="btn" onclick="exportData()"><i class="fas fa-download"></i> 导出</button>
+            <button class="btn" onclick="document.getElementById('import-file').click()"><i class="fas fa-upload"></i> 导入</button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+    </aside>
+    <div class="mobile-nav">
+        <select id="mobile-cat-select" onchange="selectCategory(this.value)"></select>
+    </div>
+    <main class="main" id="main">
+        <div class="top-bar">
+            <h2 id="current-cat-title">全部</h2>
+            <button class="btn" id="edit-toggle" onclick="toggleEdit()"><i class="fas fa-pen"></i> 编辑模式</button>
+        </div>
+        <div class="add-form" id="add-form">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;">添加卡片</h3>
+            <div class="form-row">
+                <label>类型</label>
+                <select id="form-type" onchange="updateFormFields()">
+                    <option value="link">链接</option>
+                    <option value="memo">备忘速查</option>
+                    <option value="copy">快捷复制</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>标题</label>
+                <input id="form-title" placeholder="网站名称 / 备忘标题">
+            </div>
+            <div class="form-row" id="form-url-row">
+                <label>网址</label>
+                <input id="form-url" placeholder="https://...">
+            </div>
+            <div class="form-row">
+                <label>内容 / 描述</label>
+                <textarea id="form-content" rows="2" placeholder="一句话描述或要复制的内容"></textarea>
+            </div>
+            <div class="form-row">
+                <label>分类</label>
+                <input id="form-category" list="cat-list" placeholder="选择或输入新分类">
+                <datalist id="cat-list"></datalist>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="addCard()">添加</button>
+                <button class="btn" onclick="cancelEdit()">取消</button>
+            </div>
+        </div>
+        <div class="cards-grid" id="cards-grid"></div>
+    </main>
+</div>
+
+<script>
+const STORAGE_KEY = 'designkit_data';
+const DEFAULT_DATA = {
+    categories: ['灵感素材', '设计工具', '尺寸规范备忘', '常用颜色代码'],
+    cards: [
+        { id: 1, type: 'link', title: 'Behance', url: 'https://www.behance.net', content: '全球创意作品展示平台', category: '灵感素材' },
+        { id: 2, type: 'link', title: 'Pinterest', url: 'https://www.pinterest.com', content: '视觉灵感瀑布流', category: '灵感素材' },
+        { id: 3, type: 'link', title: '站酷', url: 'https://www.zcool.com.cn', content: '国内设计师社区', category: '灵感素材' },
+        { id: 4, type: 'link', title: 'Coolors 配色', url: 'https://coolors.co', content: '一键生成配色方案', category: '设计工具' },
+        { id: 5, type: 'link', title: 'Remove.bg', url: 'https://www.remove.bg', content: 'AI 自动抠图', category: '设计工具' },
+        { id: 6, type: 'link', title: 'TinyPNG', url: 'https://tinypng.com', content: '图片无损压缩', category: '设计工具' },
+        { id: 7, type: 'memo', title: '网页常用宽度', content: '1920×1080, 1440×900, 1366×768, 1280×720', category: '尺寸规范备忘' },
+        { id: 8, type: 'memo', title: '移动端尺寸', content: 'iPhone 15 Pro: 393×852, 安卓基准: 360×800', category: '尺寸规范备忘' },
+        { id: 9, type: 'copy', title: '主品牌色', content: '#3A86FF', category: '常用颜色代码' },
+        { id: 10, type: 'copy', title: '成功绿', content: '#28A745', category: '常用颜色代码' },
+        { id: 11, type: 'copy', title: '文字灰', content: '#6C757D', category: '常用颜色代码' }
+    ]
+};
+
+let data = {};
+let currentCat = '全部';
+let editMode = false;
+let editingId = null;
+
+function loadData() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+        data = JSON.parse(stored);
+    } else {
+        data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        saveData();
+    }
+}
+
+function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function render() {
+    renderSidebar();
+    renderCards();
+    renderMobileNav();
+    updateFormCatList();
+}
+
+function renderSidebar() {
+    const el = document.getElementById('sidebar-cats');
+    const allBtn = `<button class="sidebar-item ${currentCat === '全部' ? 'active' : ''}" onclick="selectCategory('全部')">全部</button>`;
+    const cats = data.categories.map(c =>
+        `<button class="sidebar-item ${currentCat === c ? 'active' : ''}" onclick="selectCategory('${c}')">${c}</button>`
+    ).join('');
+    el.innerHTML = allBtn + cats;
+}
+
+function renderMobileNav() {
+    const sel = document.getElementById('mobile-cat-select');
+    sel.innerHTML = `<option value="全部">全部</option>` +
+        data.categories.map(c => `<option value="${c}" ${currentCat === c ? 'selected' : ''}>${c}</option>`).join('');
+}
+
+function renderCards() {
+    const grid = document.getElementById('cards-grid');
+    let cards = data.cards;
+    if (currentCat !== '全部') cards = cards.filter(c => c.category === currentCat);
+
+    grid.innerHTML = cards.map(card => {
+        let typeClass = `card-type-${card.type}`;
+        let inner = '';
+        if (card.type === 'link') {
+            const url = card.url.startsWith('http') ? card.url : 'https://' + card.url;
+            inner = `
+                <div class="card-title">${card.title}</div>
+                <div class="card-desc">${card.content || ''}</div>
+                <div class="card-url">${url}</div>
+            `;
+        } else if (card.type === 'memo') {
+            inner = `
+                <div class="card-title"><i class="fas fa-bookmark" style="color:#FF9500;margin-right:4px;font-size:0.8rem;"></i>${card.title}</div>
+                <div class="card-desc">${card.content}</div>
+            `;
+        } else if (card.type === 'copy') {
+            inner = `
+                <div class="card-title"><i class="fas fa-copy" style="color:#007AFF;margin-right:4px;font-size:0.8rem;"></i>${card.title}</div>
+                <div class="card-desc" style="font-family:monospace;font-size:0.9rem;">${card.content}</div>
+                <div class="copy-hint">📋 点击复制</div>
+                <div class="copied-toast" id="toast-${card.id}">已复制！</div>
+            `;
+        }
+        return `
+            <div class="card ${typeClass}" onclick="cardClick(${card.id})" data-id="${card.id}">
+                ${inner}
+                <div class="card-actions">
+                    <button onclick="event.stopPropagation();editCard(${card.id})" title="编辑"><i class="fas fa-pen"></i></button>
+                    <button onclick="event.stopPropagation();deleteCard(${card.id})" title="删除"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('current-cat-title').textContent = currentCat;
+}
+
+function selectCategory(cat) {
+    currentCat = cat;
+    render();
+}
+
+function cardClick(id) {
+    if (editMode) return;
+    const card = data.cards.find(c => c.id === id);
+    if (!card) return;
+    if (card.type === 'link') {
+        const url = card.url.startsWith('http') ? card.url : 'https://' + card.url;
+        window.open(url, '_blank');
+    } else if (card.type === 'copy') {
+        navigator.clipboard.writeText(card.content).then(() => {
+            const toast = document.getElementById(`toast-${id}`);
+            if (toast) { toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1500); }
+        });
+    }
+}
+
+function toggleEdit() {
+    editMode = !editMode;
+    document.getElementById('app').classList.toggle('editing', editMode);
+    document.getElementById('add-form').classList.toggle('visible', editMode);
+    document.getElementById('data-actions').style.display = editMode ? 'flex' : 'none';
+    document.getElementById('edit-toggle').innerHTML = editMode
+        ? '<i class="fas fa-check"></i> 完成'
+        : '<i class="fas fa-pen"></i> 编辑模式';
+}
+
+function updateFormFields() {
+    const type = document.getElementById('form-type').value;
+    document.getElementById('form-url-row').style.display = type === 'link' ? 'block' : 'none';
+}
+
+function updateFormCatList() {
+    document.getElementById('cat-list').innerHTML = data.categories.map(c => `<option value="${c}">`).join('');
+}
+
+function addCard() {
+    const type = document.getElementById('form-type').value;
+    const title = document.getElementById('form-title').value.trim();
+    const url = document.getElementById('form-url').value.trim();
+    const content = document.getElementById('form-content').value.trim();
+    const category = document.getElementById('form-category').value.trim();
+    if (!title || !category) return alert('请填写标题和分类');
+    if (!data.categories.includes(category)) data.categories.push(category);
+    const id = Date.now();
+    const card = { id, type, title, content, category };
+    if (type === 'link') card.url = url;
+    if (editingId) {
+        const idx = data.cards.findIndex(c => c.id === editingId);
+        if (idx >= 0) data.cards[idx] = { ...card, id: editingId };
+        editingId = null;
+    } else {
+        data.cards.push(card);
+    }
+    saveData();
+    clearForm();
+    render();
+}
+
+function editCard(id) {
+    const card = data.cards.find(c => c.id === id);
+    if (!card) return;
+    editingId = id;
+    document.getElementById('form-type').value = card.type;
+    document.getElementById('form-title').value = card.title;
+    document.getElementById('form-url').value = card.url || '';
+    document.getElementById('form-content').value = card.content || '';
+    document.getElementById('form-category').value = card.category;
+    updateFormFields();
+    document.getElementById('add-form').classList.add('visible');
+}
+
+function deleteCard(id) {
+    if (!confirm('确定删除？')) return;
+    data.cards = data.cards.filter(c => c.id !== id);
+    saveData();
+    render();
+}
+
+function cancelEdit() {
+    editingId = null;
+    clearForm();
+}
+
+function clearForm() {
+    document.getElementById('form-title').value = '';
+    document.getElementById('form-url').value = '';
+    document.getElementById('form-content').value = '';
+    document.getElementById('form-category').value = '';
+    editingId = null;
+}
+
+function exportData() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'designkit-data.json';
+    a.click();
+}
+
+function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        try {
+            data = JSON.parse(ev.target.result);
+            saveData();
+            render();
+            alert('导入成功！');
+        } catch { alert('文件格式错误'); }
+    };
+    reader.readAsText(file);
+}
+
+loadData();
+render();
+</script>
+</body>
+</html>

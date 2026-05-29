@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DesignKit</title>
+<style>
+/* ============================================================
+   【CSS 样式代码区】- 禁止普通用户修改
+   ============================================================ */
+:root {
+    --bg: #f5f5f7;
+    --card-bg: #ffffff;
+    --text: #1d1d1f;
+    --text-secondary: #86868b;
+    --text-tertiary: #aeaeb2;
+    --border: #e5e5e7;
+    --hover: #f0f0f2;
+    --radius: 14px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+    --bg: #1c1c1e;
+    --card-bg: #2c2c2e;
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --text-tertiary: #636366;
+    --border: #3a3a3c;
+    --hover: #3a3a3c;
+    --shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s, color 0.3s;
+}
+.top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s;
+}
+.top-bar h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+.theme-btn {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card-bg);
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+}
+.theme-btn:hover { background: var(--hover); }
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.group { margin-bottom: 2.5rem; }
+.group-header {
+    display: flex; align-items: center; gap: 0.5rem;
+    cursor: pointer; padding: 0.6rem 0; user-select: none;
+}
+.group-header h2 {
+    font-size: 1rem; font-weight: 600; letter-spacing: -0.01em;
+}
+.group-arrow {
+    font-size: 0.7rem; color: var(--text-tertiary);
+    transition: transform 0.2s;
+}
+.group.collapsed .group-arrow { transform: rotate(-90deg); }
+.group-content {
+    overflow: hidden;
+    max-height: 2000px;
+    transition: max-height 0.3s ease, opacity 0.2s;
+    opacity: 1;
+}
+.group.collapsed .group-content { max-height: 0; opacity: 0; }
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.7rem;
+    margin-top: 0.8rem;
+}
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+}
+.card:hover { background: var(--hover); transform: translateY(-1px); }
+.card-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+.card-desc { font-size: 0.75rem; color: var(--text-secondary); }
+.section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3rem 0 2rem;
+}
+.aux-section { margin-bottom: 2.5rem; }
+.aux-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.aux-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.5rem;
+    font-size: 0.84rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    white-space: pre-line;
+}
+.copy-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.copy-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    gap: 1rem;
+}
+.copy-item-left { flex: 1; min-width: 0; }
+.copy-item-label { font-size: 0.82rem; font-weight: 500; }
+.copy-item-value {
+    font-size: 0.75rem; color: var(--text-secondary);
+    font-family: "SF Mono", Menlo, monospace;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.copy-btn {
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+.copy-btn:hover { background: var(--hover); color: var(--text); }
+.toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text); color: var(--bg);
+    padding: 0.5rem 1.2rem; border-radius: 8px;
+    font-size: 0.8rem; font-weight: 500;
+    opacity: 0; transition: all 0.25s;
+    pointer-events: none; z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+@media (max-width: 768px) {
+    .container { padding: 1.2rem; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .top-bar { padding: 0.8rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     【全局基础配置区】- 可修改页面标题
+     ============================================================ -->
+<div class="top-bar">
+    <h1>DesignKit</h1>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换主题">◐</button>
+</div>
+
+<div class="container">
+
+<!-- ============================================================
+     【链接分组&卡片内容区】- 核心内容修改区
+     说明：每个 group 是一个分组，修改 h2 文字改分组名
+     每个 card 是一张卡片，修改 href/名称/描述即可
+     新增分组：复制整个 <div class="group"> 块粘贴
+     新增卡片：复制一个 <a class="card"> 块粘贴到对应分组内
+     ============================================================ -->
+
+<div class="group" id="links-section"></div>
+
+<!-- ============================================================
+     【设计规范+备忘内容区】
+     ============================================================ -->
+<hr class="section-divider">
+
+<div id="specs-section"></div>
+<div id="memo-section"></div>
+
+<!-- ============================================================
+     【快捷复制条目内容区】
+     ============================================================ -->
+<div id="copy-section"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   【数据配置区】- 所有内容在此修改
+   ============================================================ */
+
+// ---- 分组默认状态：true = 默认展开，false = 默认折叠 ----
+const DEFAULT_EXPANDED = true;
+
+// ---- 链接分组数据 ----
+const LINK_GROUPS = [
+    {
+        name: "UI 设计",
+        links: [
+            { name: "Dribbble", url: "https://dribbble.com", desc: "设计灵感社区" },
+            { name: "Behance", url: "https://www.behance.net", desc: "全球创意作品展示" },
+            { name: "Mobbin", url: "https://mobbin.com", desc: "移动端 UI 截图库" },
+            { name: "Refero", url: "https://refero.design", desc: "真实产品设计参考" },
+            { name: "Figma", url: "https://www.figma.com", desc: "协作设计工具" },
+            { name: "Framer", url: "https://framer.com", desc: "交互原型 & 建站" },
+        ]
+    },
+    {
+        name: "平面设计",
+        links: [
+            { name: "Pinterest", url: "https://www.pinterest.com", desc: "视觉灵感瀑布流" },
+            { name: "Awwwards", url: "https://www.awwwards.com", desc: "优秀网页设计评选" },
+            { name: "Canva", url: "https://www.canva.com", desc: "在线平面设计工具" },
+            { name: "稿定设计", url: "https://www.gaoding.com", desc: "模板化平面设计" },
+        ]
+    },
+    {
+        name: "AI 生图",
+        links: [
+            { name: "Midjourney", url: "https://midjourney.com", desc: "AI 图像生成" },
+            { name: "即梦", url: "https://jimeng.jianying.com", desc: "字节跳动 AI 绘画" },
+            { name: "Leonardo.ai", url: "https://leonardo.ai", desc: "游戏概念 AI 生图" },
+            { name: "Ideogram", url: "https://ideogram.ai", desc: "AI 文字海报生成" },
+        ]
+    },
+    {
+        name: "素材资源",
+        links: [
+            { name: "Iconify", url: "https://iconify.design", desc: "20万+ 开源图标" },
+            { name: "Unsplash", url: "https://unsplash.com", desc: "免费高质量照片" },
+            { name: "Coolors", url: "https://coolors.co", desc: "配色方案生成器" },
+            { name: "Google Fonts", url: "https://fonts.google.com", desc: "免费开源字体" },
+            { name: "Lucide", url: "https://lucide.dev", desc: "简洁线性图标库" },
+        ]
+    }
+];
+
+// ---- 尺寸规范速查内容 ----
+const SPECS_CONTENT = `【iOS 设计尺寸】
+iPhone 16 Pro Max: 440 × 956 pt
+iPhone 15 Pro: 393 × 852 pt
+iPhone SE: 375 × 667 pt
+状态栏 (Dynamic Island): 59px
+导航栏: 44px | Tab Bar: 83px (含安全区)
+
+【Android 设计尺寸】
+基准屏幕: 360 × 800 dp
+状态栏: 24dp | App Bar: 56dp | 底部导航: 80dp
+
+【Web 断点】
+Mobile: < 768px | Tablet: 768–1024px | Desktop: 1024–1440px | Wide: > 1440px
+
+【社交媒体尺寸】
+微信头像安全区: 1080×1080px 留白15%
+朋友圈封面: 1280×1184px
+小红书封面: 1242×1660px (3:4)
+抖音封面: 1080×1920px (9:16)`;
+
+// ---- 临时备忘内容 ----
+const MEMO_CONTENT = `这里可以记录临时灵感、待办事项、随笔备注。
+直接修改此处文字即可。`;
+
+// ---- 快捷复制条目 ----
+const COPY_ITEMS = [
+    { label: "观猹品牌绿", value: "#33A66D" },
+    { label: "主品牌蓝", value: "#3A86FF" },
+    { label: "深色文字", value: "#1d1d1f" },
+    { label: "次级文字", value: "#86868b" },
+    { label: "背景灰", value: "#F5F5F7" },
+    { label: "成功绿", value: "#28A745" },
+    { label: "错误红", value: "#FF3B30" },
+    { label: "Flex 居中", value: "display: flex; align-items: center; justify-content: center;" },
+    { label: "毛玻璃效果", value: "background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);" },
+    { label: "MJ 极简白底", value: "minimal, clean, white background, soft shadow, modern design --ar 3:2 --v 6" },
+    { label: "中文占位文本", value: "在这里输入您的内容，我们将为您提供最优质的服务体验。" },
+];
+
+/* ============================================================
+   【JavaScript 交互代码区】- 禁止普通用户修改
+   ============================================================ */
+
+function render() {
+    renderLinks();
+    renderSpecs();
+    renderMemo();
+    renderCopy();
+}
+
+function renderLinks() {
+    const container = document.getElementById('links-section');
+    container.innerHTML = LINK_GROUPS.map((group, i) => `
+        <div class="group ${DEFAULT_EXPANDED ? '' : 'collapsed'}">
+            <div class="group-header" onclick="toggleGroup(this)">
+                <span class="group-arrow">▼</span>
+                <h2>${group.name}</h2>
+            </div>
+            <div class="group-content">
+                <div class="cards-grid">
+                    ${group.links.map(link => `
+                        <a href="${link.url}" target="_blank" rel="noopener" class="card">
+                            <div class="card-name">${link.name}</div>
+                            <div class="card-desc">${link.desc}</div>
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderSpecs() {
+    document.getElementById('specs-section').innerHTML = `
+        <div class="aux-section">
+            <h3 class="aux-title">尺寸 & 规范速查</h3>
+            <div class="aux-content">${SPECS_CONTENT}</div>
+        </div>
+    `;
+}
+
+function renderMemo() {
+    document.getElementById('memo-section').innerHTML = `
+        <div class="aux-section">
+            <h3 class="aux-title">临时备忘</h3>
+            <div class="aux-content">${MEMO_CONTENT}</div>
+        </div>
+    `;
+}
+
+function renderCopy() {
+    document.getElementById('copy-section').innerHTML = `
+        <div class="aux-section">
+            <h3 class="aux-title">快捷复制</h3>
+            <div class="copy-list">
+                ${COPY_ITEMS.map((item, i) => `
+                    <div class="copy-item">
+                        <div class="copy-item-left">
+                            <div class="copy-item-label">${item.label}</div>
+                            <div class="copy-item-value">${item.value}</div>
+                        </div>
+                        <button class="copy-btn" onclick="copyText('${item.value.replace(/'/g, "\\'")}')">复制</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function toggleGroup(header) {
+    header.parentElement.classList.toggle('collapsed');
+}
+
+function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
+
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.textContent = '复制成功';
+        toast.classList.add('show');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+}
+
+// Init theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+
+render();
+</script>
+</body>
+</html>

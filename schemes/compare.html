@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DesignKit - 方案对比</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f0f0; }
+.switcher {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.switcher-title {
+    color: #999;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+}
+.switcher button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    text-align: left;
+}
+.switcher button:hover { background: rgba(255,255,255,0.2); }
+.switcher button.active { background: #007AFF; color: #fff; }
+.switcher .scheme-label { font-size: 0.7rem; color: #888; margin-top: 2px; }
+iframe {
+    width: 100%;
+    height: 100vh;
+    border: none;
+    display: block;
+}
+</style>
+</head>
+<body>
+<iframe id="preview" src="deepseek.html"></iframe>
+
+<div class="switcher">
+    <div class="switcher-title">方案切换</div>
+    <button class="active" onclick="switchScheme('deepseek.html', this)">
+        A · DeepSeek
+        <div class="scheme-label">侧边栏 + localStorage 编辑</div>
+    </button>
+    <button onclick="switchScheme('gemini.html', this)">
+        B · Gemini
+        <div class="scheme-label">数据分离 + 高审美极简</div>
+    </button>
+    <button onclick="switchScheme('claude.html', this)">
+        C · Claude
+        <div class="scheme-label">JSON 驱动 + 速查复制历史</div>
+    </button>
+    <button onclick="switchScheme('doubao.html', this)">
+        D · 豆包
+        <div class="scheme-label">单文件 + 暗黑模式 + 折叠分组</div>
+    </button>
+    <button onclick="switchScheme('#', this)" disabled style="opacity:0.4">
+        E · Grok
+        <div class="scheme-label">待补充</div>
+    </button>
+</div>
+
+<script>
+function switchScheme(url, btn) {
+    document.getElementById('preview').src = url;
+    document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+</script>
+</body>
+</html>
