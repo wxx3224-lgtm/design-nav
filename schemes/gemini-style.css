@@ -42,8 +42,8 @@ body.edit-mode .edit-toggle { background: #1a1a1a; color: #fff; border-color: #1
 .section { margin-bottom: 4rem; }
 .section-title { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
 .section-subtitle {
-    font-size: 0.8rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.08em; color: #999; margin-top: 2rem; margin-bottom: 1rem;
+    font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #999; margin-top: 2rem; margin-bottom: 1rem;
     display: flex; align-items: center; gap: 0.5rem;
 }
 .subtitle-actions { display: none; gap: 0.3rem; }
@@ -66,22 +66,29 @@ body.edit-mode .subtitle-actions { display: flex; }
     border: 1px solid transparent; position: relative;
 }
 .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); border-color: #eee; }
-.card-icon { width: 36px; height: 36px; border-radius: 10px; margin-bottom: 0.8rem; object-fit: cover; }
+.card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    margin-bottom: 0.8rem; object-fit: contain;
+    background: #f4f4f5; padding: 6px;
+    display: flex; align-items: center; justify-content: center;
+}
 .card-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
 .card-desc { font-size: 0.8rem; color: #888; }
 
 .card-edit-controls {
     position: absolute; top: 0.7rem; right: 0.7rem;
-    display: none; gap: 0.3rem;
+    display: none; gap: 0.3rem; opacity: 0.15; transition: opacity 0.2s;
 }
 body.edit-mode .card-edit-controls { display: flex; }
+body.edit-mode .card:hover .card-edit-controls { opacity: 1; }
 .card-edit-btn {
-    width: 24px; height: 24px; border-radius: 6px; border: 1px solid #eee;
-    background: #fff; cursor: pointer; font-size: 0.65rem;
+    width: 24px; height: 24px; border-radius: 6px; border: none;
+    background: transparent; cursor: pointer; font-size: 0.7rem;
     display: flex; align-items: center; justify-content: center; color: #999;
+    transition: all 0.15s;
 }
-.card-edit-btn:hover { background: #f5f5f5; color: #333; }
-.card-edit-btn.del:hover { background: #fff0f0; color: #FF3B30; }
+.card-edit-btn:hover { color: #333; background: rgba(0,0,0,0.04); }
+.card-edit-btn.del:hover { color: #FF3B30; background: rgba(255,59,48,0.06); }
 
 /* Add card placeholder */
 .card-add {
@@ -130,9 +137,11 @@ body.edit-mode .add-category-btn { display: inline-block; }
 
 .item-edit-controls {
     position: absolute; top: 50%; right: 0.5rem; transform: translateY(-50%);
-    display: none; gap: 0.2rem;
+    display: none; gap: 0.2rem; opacity: 0.15; transition: opacity 0.2s;
 }
 body.edit-mode .item-edit-controls { display: flex; }
+body.edit-mode .dim-item:hover .item-edit-controls,
+body.edit-mode .copy-item:hover .item-edit-controls { opacity: 1; }
 body.edit-mode .copy-icon { display: none; }
 
 .item-add {
@@ -146,19 +155,22 @@ body.edit-mode .item-add { display: block; }
 /* Toolbar */
 .toolbar {
     position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-    background: #fff; border: 1px solid #eee; border-radius: 12px;
-    padding: 0.5rem; display: none; gap: 0.4rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08); z-index: 90;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border: 1px solid rgba(0,0,0,0.06); border-radius: 100px;
+    padding: 0.45rem 0.6rem; display: none; gap: 0.3rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    z-index: 90;
 }
 body.edit-mode .toolbar { display: flex; }
 .toolbar-btn {
-    padding: 0.4rem 0.9rem; border: none; border-radius: 8px;
-    background: #f5f5f5; font-size: 0.78rem; cursor: pointer;
-    color: #666; transition: all 0.15s;
+    padding: 0.4rem 1rem; border: none; border-radius: 100px;
+    background: transparent; font-size: 0.78rem; cursor: pointer;
+    color: #666; transition: all 0.15s; white-space: nowrap;
 }
-.toolbar-btn:hover { background: #eee; color: #1a1a1a; }
+.toolbar-btn:hover { background: rgba(0,0,0,0.04); color: #1a1a1a; }
 .toolbar-btn.danger { color: #FF3B30; }
-.toolbar-btn.danger:hover { background: #fff0f0; }
+.toolbar-btn.danger:hover { background: rgba(255,59,48,0.06); }
 
 /* Toast */
 .toast {

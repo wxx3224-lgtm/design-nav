@@ -72,8 +72,10 @@ function renderLinks() {
 }
 
 function renderSubtitle(text, ci, si) {
+    const idx = String(ci + 1).padStart(2, '0');
+    const displayText = si === null ? `${idx} / ${text}` : text;
     return `<h3 class="section-subtitle">
-        <span>${text}</span>
+        <span>${displayText}</span>
         <span class="subtitle-actions">
             <button class="subtitle-btn" onclick="renameCat(${ci},${si === null ? 'null' : si})" title="重命名">✏️</button>
             <button class="subtitle-btn" onclick="deleteCat(${ci},${si === null ? 'null' : si})" title="删除">🗑️</button>

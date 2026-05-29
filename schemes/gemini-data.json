@@ -5,6 +5,13 @@
   },
   "links": [
     {
+      "category": "品牌网站",
+      "items": [
+        { "name": "TokenDance", "desc": "Web3 品牌符号与创意资产", "url": "https://tokendance.space", "tags": ["品牌"] },
+        { "name": "观猹网站", "desc": "观猹 IP 官方网站 / 创意阵地", "url": "https://guancha.site", "tags": ["品牌"] }
+      ]
+    },
+    {
       "category": "UI 设计",
       "items": [
         { "name": "Dribbble", "desc": "设计灵感社区", "url": "https://dribbble.com", "tags": ["灵感"] },
