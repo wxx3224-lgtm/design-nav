@@ -36,7 +36,7 @@ function render() { renderNav(); renderMain(); }
 // ---- Nav ----
 function renderNav() {
     const nav = document.getElementById('nav');
-    const sections = ['链接', '尺寸规范', '快捷复制'];
+    const sections = ['常用网站', '尺寸规范', '快捷复制'];
     nav.innerHTML = sections.map((s, i) =>
         `<a href="#section-${i}" class="${i === 0 ? 'active' : ''}" onclick="smoothScroll(event,'section-${i}')">${s}</a>`
     ).join('');
@@ -50,7 +50,7 @@ function renderMain() {
 
 // ---- Links ----
 function renderLinks() {
-    let html = `<section class="section" id="section-0"><h2 class="section-title">链接</h2>`;
+    let html = `<section class="section" id="section-0"><h2 class="section-title">常用网站</h2>`;
     data.links.forEach((cat, ci) => {
         if (cat.subcategories) {
             cat.subcategories.forEach((sub, si) => {
