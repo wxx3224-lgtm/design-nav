@@ -3,9 +3,25 @@ let data = {};
 let editMode = false;
 
 async function init() {
+    // Clean up old storage keys from previous versions
+    localStorage.removeItem('designkit_full_data');
+    localStorage.removeItem('designkit_user_cards');
+
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-        data = JSON.parse(stored);
+        try {
+            const parsed = JSON.parse(stored);
+            if (parsed.links && Array.isArray(parsed.links)) {
+                data = parsed;
+            } else {
+                throw new Error('invalid');
+            }
+        } catch {
+            localStorage.removeItem(STORAGE_KEY);
+            const res = await fetch('gemini-data.json');
+            data = await res.json();
+            saveData();
+        }
     } else {
         const res = await fetch('gemini-data.json');
         data = await res.json();
