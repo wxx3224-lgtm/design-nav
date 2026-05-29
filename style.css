@@ -226,6 +226,12 @@ body.edit-mode .toast.show { transform: translateX(-50%) translateY(-40px); }
     transition: border-color 0.2s; font-family: inherit; background: #fafafa;
 }
 .form-field input:focus { border-color: #1a1a1a; background: #fff; }
+.form-field input.fetching {
+    background: linear-gradient(90deg, #fafafa 25%, #f0f0f0 50%, #fafafa 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+.form-field input.fetching::placeholder { color: #bbb; }
 .form-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem; }
 .btn-submit {
     padding: 0.55rem 1.2rem; background: #1a1a1a; color: #fff;

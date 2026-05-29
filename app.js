@@ -217,7 +217,59 @@ function openAddCard(ci, si) {
     document.getElementById('cf-sub-idx').value = si !== null ? si : '';
     document.getElementById('cf-item-idx').value = '';
     document.getElementById('card-modal').classList.add('show');
+    document.getElementById('cf-url').focus();
 }
+
+// ---- URL Auto-fetch ----
+let fetchController = null;
+
+function setupUrlAutoFetch() {
+    const urlInput = document.getElementById('cf-url');
+    const nameInput = document.getElementById('cf-name');
+    const descInput = document.getElementById('cf-desc');
+
+    function handleUrlChange() {
+        const url = urlInput.value.trim();
+        if (!url || !url.startsWith('http')) return;
+        if (nameInput.value.trim() && descInput.value.trim()) return;
+
+        if (fetchController) fetchController.abort();
+        fetchController = new AbortController();
+
+        nameInput.placeholder = '正在智能抓取网站信息...';
+        descInput.placeholder = '正在智能抓取网站信息...';
+        nameInput.classList.add('fetching');
+        descInput.classList.add('fetching');
+
+        fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`, {
+            signal: fetchController.signal
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(json) {
+            if (json.status === 'success' && json.data) {
+                if (!nameInput.value.trim() && json.data.title) {
+                    nameInput.value = json.data.title.slice(0, 50);
+                }
+                if (!descInput.value.trim() && json.data.description) {
+                    descInput.value = json.data.description.slice(0, 80);
+                }
+            }
+        })
+        .catch(function(e) {})
+        .finally(function() {
+            nameInput.placeholder = '网站名称';
+            descInput.placeholder = '一句话描述（可选）';
+            nameInput.classList.remove('fetching');
+            descInput.classList.remove('fetching');
+            fetchController = null;
+        });
+    }
+
+    urlInput.addEventListener('paste', function() { setTimeout(handleUrlChange, 100); });
+    urlInput.addEventListener('blur', handleUrlChange);
+}
+
+document.addEventListener('DOMContentLoaded', setupUrlAutoFetch);
 
 function editCard(ci, si, ii) {
     const items = si !== null ? data.links[ci].subcategories[si].items : data.links[ci].items;
