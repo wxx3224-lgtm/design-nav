@@ -16,7 +16,7 @@ async function init() {
                 } else {
                     throw new Error('invalid');
                 }
-            } catch {
+            } catch(e) {
                 localStorage.removeItem(STORAGE_KEY);
                 const res = await fetch('data.json');
                 data = await res.json();
@@ -90,7 +90,7 @@ function renderSubtitle(text, ci, si) {
 }
 
 function renderCard(item, ci, si, ii) {
-    const domain = (() => { try { return new URL(item.url).hostname; } catch { return ''; } })();
+    const domain = (() => { try { return new URL(item.url).hostname; } catch(e) { return ''; } })();
     const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
     return `<a href="${item.url}" target="_blank" rel="noopener" class="card">
         ${favicon ? `<img src="${favicon}" class="card-icon" alt="" onerror="this.style.display='none'">` : ''}
