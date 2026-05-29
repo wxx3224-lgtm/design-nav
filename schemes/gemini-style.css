@@ -66,12 +66,7 @@ body.edit-mode .subtitle-actions { display: flex; }
     border: 1px solid transparent; position: relative;
 }
 .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); border-color: #eee; }
-.card-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    margin-bottom: 0.8rem; object-fit: contain;
-    background: #f4f4f5; padding: 6px;
-    display: flex; align-items: center; justify-content: center;
-}
+.card-icon { width: 36px; height: 36px; border-radius: 10px; margin-bottom: 0.8rem; object-fit: cover; }
 .card-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
 .card-desc { font-size: 0.8rem; color: #888; }
 
