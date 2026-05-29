@@ -124,19 +124,53 @@
   ],
   "quickCopy": [
     {
-      "group": "常用色值",
+      "group": "Claude Code 常用指令",
       "items": [
-        { "label": "观猹品牌绿", "value": "#33A66D" },
-        { "label": "主品牌蓝", "value": "#3A86FF" },
-        { "label": "深色文字", "value": "#1d1d1f" },
-        { "label": "次级文字", "value": "#86868b" },
-        { "label": "边框色", "value": "#e5e5e7" },
-        { "label": "页面背景", "value": "#F5F5F7" },
-        { "label": "成功绿", "value": "#28A745" },
-        { "label": "警告橙", "value": "#FF9500" },
-        { "label": "错误红", "value": "#FF3B30" },
-        { "label": "纯白", "value": "#FFFFFF" },
-        { "label": "纯黑", "value": "#000000" }
+        { "label": "恢复上次对话", "value": "cc" },
+        { "label": "开命名会话", "value": "ccn \"会话名\"" },
+        { "label": "选择历史会话", "value": "ccr" },
+        { "label": "提交代码", "value": "claude commit" },
+        { "label": "查看状态", "value": "/status" },
+        { "label": "压缩上下文", "value": "/compress" },
+        { "label": "创建计划", "value": "/make-plan" },
+        { "label": "执行计划", "value": "/do" },
+        { "label": "学习代码库", "value": "/learn-codebase" },
+        { "label": "更新知识库", "value": "/kb-update" },
+        { "label": "PUA 模式", "value": "/pua" },
+        { "label": "穴居人模式", "value": "/caveman" }
+      ]
+    },
+    {
+      "group": "Skills 快捷触发",
+      "items": [
+        { "label": "网页搜索", "value": "/web-access" },
+        { "label": "OCR 截图识别", "value": "/paddleocr-text-recognition" },
+        { "label": "设计研究", "value": "/refero-design" },
+        { "label": "PR 监控", "value": "/babysit" },
+        { "label": "跨会话记忆搜索", "value": "/mem-search" },
+        { "label": "自学习提取", "value": "/claudeception" },
+        { "label": "去AI痕迹", "value": "/humanizer-zh" },
+        { "label": "代码结构搜索", "value": "/smart-explore" },
+        { "label": "PPT 生成", "value": "/nanobanana-ppt" }
+      ]
+    },
+    {
+      "group": "Firecrawl 指令",
+      "items": [
+        { "label": "检查额度", "value": "firecrawl --status" },
+        { "label": "搜索", "value": "firecrawl search \"关键词\" --limit 5" },
+        { "label": "抓取网页", "value": "firecrawl scrape \"URL\" -o output.md" },
+        { "label": "网站地图", "value": "firecrawl map \"URL\"" }
+      ]
+    },
+    {
+      "group": "lark-cli 常用",
+      "items": [
+        { "label": "创建文档", "value": "lark-cli docs +create --title \"标题\" --markdown @file.md" },
+        { "label": "更新文档", "value": "lark-cli docs +update --doc TOKEN --mode overwrite --markdown @file.md" },
+        { "label": "发消息", "value": "lark-cli im +messages-send --user-id \"ou_xxx\" --markdown \"内容\"" },
+        { "label": "查日程", "value": "lark-cli calendar +agenda" },
+        { "label": "搜用户", "value": "lark-cli contact +search-user --query \"姓名\"" }
       ]
     },
     {
