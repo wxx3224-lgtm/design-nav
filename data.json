@@ -1,140 +1,210 @@
 {
-  "categories": [
+  "site": {
+    "name": "DesignKit",
+    "slogan": "设计师效率工具箱"
+  },
+  "links": [
     {
-      "id": "ui-design",
-      "name": "UI 设计",
-      "icon": "🎨",
-      "links": [
-        { "title": "Dribbble", "url": "https://dribbble.com", "desc": "设计灵感社区", "tags": ["灵感", "免费"] },
-        { "title": "Behance", "url": "https://behance.net", "desc": "作品集展示平台", "tags": ["灵感", "免费"] },
-        { "title": "Mobbin", "url": "https://mobbin.com", "desc": "移动端 UI 参考库", "tags": ["灵感", "工具"] },
-        { "title": "Refero", "url": "https://refero.design", "desc": "真实产品截图参考", "tags": ["灵感", "免费"] },
-        { "title": "Figma", "url": "https://figma.com", "desc": "协作设计工具", "tags": ["工具"] },
-        { "title": "Framer", "url": "https://framer.com", "desc": "交互原型 & 建站", "tags": ["工具"] }
+      "category": "品牌网站",
+      "items": [
+        { "name": "TokenDance", "desc": "Web3 品牌符号与创意资产", "url": "https://tokendance.space", "tags": ["品牌"] },
+        { "name": "观猹网站", "desc": "观猹 IP 官方网站 / 创意阵地", "url": "https://guancha.site", "tags": ["品牌"] }
       ]
     },
     {
-      "id": "graphic-design",
-      "name": "平面设计",
-      "icon": "🖼️",
-      "links": [
-        { "title": "Canva", "url": "https://canva.com", "desc": "在线平面设计工具", "tags": ["工具", "免费"] },
-        { "title": "Pinterest", "url": "https://pinterest.com", "desc": "视觉灵感瀑布流", "tags": ["灵感"] },
-        { "title": "Awwwards", "url": "https://awwwards.com", "desc": "优秀网页设计评选", "tags": ["灵感"] },
-        { "title": "稿定设计", "url": "https://gaoding.com", "desc": "模板化平面设计", "tags": ["工具", "免费"] }
+      "category": "UI 设计",
+      "items": [
+        { "name": "Dribbble", "desc": "设计灵感社区", "url": "https://dribbble.com", "tags": ["灵感"] },
+        { "name": "Behance", "desc": "全球创意作品展示", "url": "https://www.behance.net", "tags": ["灵感"] },
+        { "name": "Mobbin", "desc": "移动端 UI 截图库", "url": "https://mobbin.com", "tags": ["灵感"] },
+        { "name": "Refero", "desc": "真实产品设计参考", "url": "https://refero.design", "tags": ["灵感"] },
+        { "name": "Figma", "desc": "协作设计工具", "url": "https://www.figma.com", "tags": ["工具"] },
+        { "name": "Framer", "desc": "交互原型 & 建站", "url": "https://framer.com", "tags": ["工具"] },
+        { "name": "Readymag", "desc": "视觉叙事建站", "url": "https://readymag.com", "tags": ["工具"] }
       ]
     },
     {
-      "id": "ai-image",
-      "name": "AI 生图",
-      "icon": "🤖",
-      "links": [
-        { "title": "Midjourney", "url": "https://midjourney.com", "desc": "AI 图像生成", "tags": ["工具"] },
-        { "title": "DALL·E", "url": "https://openai.com/dall-e-3", "desc": "OpenAI 图像生成", "tags": ["工具"] },
-        { "title": "Stable Diffusion", "url": "https://stability.ai", "desc": "开源 AI 绘画", "tags": ["工具", "免费"] },
-        { "title": "Leonardo.ai", "url": "https://leonardo.ai", "desc": "游戏/概念 AI 生图", "tags": ["工具"] },
-        { "title": "即梦", "url": "https://jimeng.jianying.com", "desc": "字节跳动 AI 绘画", "tags": ["工具", "免费"] }
+      "category": "平面设计",
+      "items": [
+        { "name": "Pinterest", "desc": "视觉灵感瀑布流", "url": "https://www.pinterest.com", "tags": ["灵感"] },
+        { "name": "Awwwards", "desc": "优秀网页设计评选", "url": "https://www.awwwards.com", "tags": ["灵感"] },
+        { "name": "Canva", "desc": "在线平面设计工具", "url": "https://www.canva.com", "tags": ["工具", "免费"] },
+        { "name": "稿定设计", "desc": "模板化平面设计", "url": "https://www.gaoding.com", "tags": ["工具"] },
+        { "name": "创客贴", "desc": "在线图片编辑", "url": "https://www.chuangkit.com", "tags": ["工具", "免费"] }
       ]
     },
     {
-      "id": "resources",
-      "name": "素材资源",
-      "icon": "📦",
+      "category": "AI 生图",
+      "items": [
+        { "name": "Midjourney", "desc": "AI 图像生成", "url": "https://midjourney.com", "tags": ["工具"] },
+        { "name": "DALL·E 3", "desc": "OpenAI 图像生成", "url": "https://openai.com/dall-e-3", "tags": ["工具"] },
+        { "name": "即梦", "desc": "字节跳动 AI 绘画", "url": "https://jimeng.jianying.com", "tags": ["工具", "免费"] },
+        { "name": "Leonardo.ai", "desc": "游戏概念 AI 生图", "url": "https://leonardo.ai", "tags": ["工具"] },
+        { "name": "Stable Diffusion", "desc": "开源 AI 绘画", "url": "https://stability.ai", "tags": ["工具", "免费"] },
+        { "name": "Ideogram", "desc": "AI 文字海报生成", "url": "https://ideogram.ai", "tags": ["工具"] }
+      ]
+    },
+    {
+      "category": "素材资源",
       "subcategories": [
         {
           "name": "图标",
-          "links": [
-            { "title": "Iconify", "url": "https://iconify.design", "desc": "20万+ 开源图标集合", "tags": ["免费"] },
-            { "title": "Lucide", "url": "https://lucide.dev", "desc": "简洁线性图标库", "tags": ["免费"] },
-            { "title": "Phosphor", "url": "https://phosphoricons.com", "desc": "灵活风格图标", "tags": ["免费"] }
+          "items": [
+            { "name": "Iconify", "desc": "20万+ 开源图标集合", "url": "https://iconify.design", "tags": ["免费"] },
+            { "name": "Lucide", "desc": "简洁线性图标库", "url": "https://lucide.dev", "tags": ["免费"] },
+            { "name": "Phosphor", "desc": "灵活风格图标", "url": "https://phosphoricons.com", "tags": ["免费"] },
+            { "name": "Heroicons", "desc": "Tailwind 官方图标", "url": "https://heroicons.com", "tags": ["免费"] }
           ]
         },
         {
           "name": "色彩工具",
-          "links": [
-            { "title": "Coolors", "url": "https://coolors.co", "desc": "配色方案生成器", "tags": ["工具", "免费"] },
-            { "title": "Realtime Colors", "url": "https://realtimecolors.com", "desc": "实时预览配色效果", "tags": ["工具", "免费"] },
-            { "title": "Color Hunt", "url": "https://colorhunt.co", "desc": "配色灵感收藏", "tags": ["灵感", "免费"] }
+          "items": [
+            { "name": "Coolors", "desc": "配色方案生成器", "url": "https://coolors.co", "tags": ["工具", "免费"] },
+            { "name": "Realtime Colors", "desc": "实时预览配色效果", "url": "https://realtimecolors.com", "tags": ["工具", "免费"] },
+            { "name": "Color Hunt", "desc": "配色灵感收藏", "url": "https://colorhunt.co", "tags": ["灵感", "免费"] },
+            { "name": "Happy Hues", "desc": "配色方案实景预览", "url": "https://www.happyhues.co", "tags": ["灵感", "免费"] }
           ]
         },
         {
           "name": "照片素材",
-          "links": [
-            { "title": "Unsplash", "url": "https://unsplash.com", "desc": "免费高质量照片", "tags": ["免费"] },
-            { "title": "Pexels", "url": "https://pexels.com", "desc": "免费图片视频素材", "tags": ["免费"] }
+          "items": [
+            { "name": "Unsplash", "desc": "免费高质量照片", "url": "https://unsplash.com", "tags": ["免费"] },
+            { "name": "Pexels", "desc": "免费图片视频素材", "url": "https://www.pexels.com", "tags": ["免费"] }
           ]
         },
         {
           "name": "字体与排版",
-          "links": [
-            { "title": "Google Fonts", "url": "https://fonts.google.com", "desc": "免费开源字体库", "tags": ["免费"] },
-            { "title": "字由", "url": "https://www.hellofont.cn", "desc": "中文字体管理工具", "tags": ["工具"] },
-            { "title": "Type Scale", "url": "https://typescale.com", "desc": "字体比例计算器", "tags": ["工具", "免费"] }
+          "items": [
+            { "name": "Google Fonts", "desc": "免费开源字体库", "url": "https://fonts.google.com", "tags": ["免费"] },
+            { "name": "字由", "desc": "中文字体管理工具", "url": "https://www.hellofont.cn", "tags": ["工具"] },
+            { "name": "Type Scale", "desc": "字体比例计算器", "url": "https://typescale.com", "tags": ["工具", "免费"] },
+            { "name": "Fontshare", "desc": "高质量免费字体", "url": "https://www.fontshare.com", "tags": ["免费"] }
           ]
         }
       ]
-    },
+    }
+  ],
+  "specs": [
     {
-      "id": "specs",
-      "name": "尺寸规范 & 速查",
-      "icon": "📐",
-      "type": "specs",
+      "group": "iOS 设计尺寸",
       "items": [
-        {
-          "group": "iOS 设计尺寸",
-          "entries": [
-            { "label": "iPhone 15 Pro Max", "value": "430 × 932 pt" },
-            { "label": "iPhone 15 Pro", "value": "393 × 852 pt" },
-            { "label": "iPhone SE", "value": "375 × 667 pt" },
-            { "label": "iPad Pro 12.9\"", "value": "1024 × 1366 pt" },
-            { "label": "状态栏高度", "value": "59px (Dynamic Island)" },
-            { "label": "导航栏高度", "value": "44px" },
-            { "label": "Tab Bar 高度", "value": "49px (83px with safe area)" }
-          ]
-        },
-        {
-          "group": "Android 设计尺寸",
-          "entries": [
-            { "label": "基准屏幕", "value": "360 × 800 dp" },
-            { "label": "状态栏高度", "value": "24dp" },
-            { "label": "导航栏高度", "value": "56dp" },
-            { "label": "底部导航高度", "value": "80dp" }
-          ]
-        },
-        {
-          "group": "Web 常用断点",
-          "entries": [
-            { "label": "Mobile", "value": "< 768px" },
-            { "label": "Tablet", "value": "768px - 1024px" },
-            { "label": "Desktop", "value": "1024px - 1440px" },
-            { "label": "Wide", "value": "> 1440px" }
-          ]
-        }
+        { "label": "iPhone 16 Pro Max", "value": "440 × 956 pt" },
+        { "label": "iPhone 15 Pro", "value": "393 × 852 pt" },
+        { "label": "iPhone SE", "value": "375 × 667 pt" },
+        { "label": "iPad Pro 12.9\"", "value": "1024 × 1366 pt" },
+        { "label": "状态栏 (Dynamic Island)", "value": "59px" },
+        { "label": "导航栏", "value": "44px" },
+        { "label": "Tab Bar (含安全区)", "value": "83px" },
+        { "label": "安全区底部", "value": "34px" }
       ]
     },
     {
-      "id": "quick-copy",
-      "name": "快捷复制",
-      "icon": "📋",
-      "type": "copy",
+      "group": "Android 设计尺寸",
       "items": [
-        {
-          "group": "常用色值",
-          "entries": [
-            { "label": "观猹品牌绿", "value": "#33A66D" },
-            { "label": "纯黑", "value": "#000000" },
-            { "label": "深灰文字", "value": "#333333" },
-            { "label": "浅灰描述", "value": "#999999" },
-            { "label": "背景灰", "value": "#F5F5F5" }
-          ]
-        },
-        {
-          "group": "常用提示词",
-          "entries": [
-            { "label": "Midjourney 极简风格", "value": "minimal, clean, white background, soft shadow, modern design --ar 3:2 --v 6" },
-            { "label": "UI 截图提示", "value": "UI design, mobile app screenshot, iOS style, clean layout, light theme" }
-          ]
-        }
+        { "label": "基准屏幕", "value": "360 × 800 dp" },
+        { "label": "状态栏", "value": "24dp" },
+        { "label": "App Bar", "value": "56dp" },
+        { "label": "底部导航", "value": "80dp" },
+        { "label": "FAB 按钮", "value": "56dp" }
+      ]
+    },
+    {
+      "group": "Web 断点",
+      "items": [
+        { "label": "Mobile", "value": "< 768px" },
+        { "label": "Tablet", "value": "768 – 1024px" },
+        { "label": "Desktop", "value": "1024 – 1440px" },
+        { "label": "Wide", "value": "> 1440px" }
+      ]
+    },
+    {
+      "group": "社交媒体尺寸",
+      "items": [
+        { "label": "微信头像安全区", "value": "1080×1080px 留白15%" },
+        { "label": "朋友圈封面", "value": "1280×1184px" },
+        { "label": "公众号头图", "value": "900×383px" },
+        { "label": "小红书封面", "value": "1242×1660px (3:4)" },
+        { "label": "抖音封面", "value": "1080×1920px (9:16)" },
+        { "label": "B站封面", "value": "1146×717px (16:10)" }
+      ]
+    }
+  ],
+  "quickCopy": [
+    {
+      "group": "Claude Code 常用指令",
+      "items": [
+        { "label": "恢复上次对话", "value": "cc" },
+        { "label": "开命名会话", "value": "ccn \"会话名\"" },
+        { "label": "选择历史会话", "value": "ccr" },
+        { "label": "提交代码", "value": "claude commit" },
+        { "label": "查看状态", "value": "/status" },
+        { "label": "压缩上下文", "value": "/compress" },
+        { "label": "创建计划", "value": "/make-plan" },
+        { "label": "执行计划", "value": "/do" },
+        { "label": "学习代码库", "value": "/learn-codebase" },
+        { "label": "更新知识库", "value": "/kb-update" },
+        { "label": "PUA 模式", "value": "/pua" },
+        { "label": "穴居人模式", "value": "/caveman" }
+      ]
+    },
+    {
+      "group": "Skills 快捷触发",
+      "items": [
+        { "label": "网页搜索", "value": "/web-access" },
+        { "label": "OCR 截图识别", "value": "/paddleocr-text-recognition" },
+        { "label": "设计研究", "value": "/refero-design" },
+        { "label": "PR 监控", "value": "/babysit" },
+        { "label": "跨会话记忆搜索", "value": "/mem-search" },
+        { "label": "自学习提取", "value": "/claudeception" },
+        { "label": "去AI痕迹", "value": "/humanizer-zh" },
+        { "label": "代码结构搜索", "value": "/smart-explore" },
+        { "label": "PPT 生成", "value": "/nanobanana-ppt" }
+      ]
+    },
+    {
+      "group": "Firecrawl 指令",
+      "items": [
+        { "label": "检查额度", "value": "firecrawl --status" },
+        { "label": "搜索", "value": "firecrawl search \"关键词\" --limit 5" },
+        { "label": "抓取网页", "value": "firecrawl scrape \"URL\" -o output.md" },
+        { "label": "网站地图", "value": "firecrawl map \"URL\"" }
+      ]
+    },
+    {
+      "group": "lark-cli 常用",
+      "items": [
+        { "label": "创建文档", "value": "lark-cli docs +create --title \"标题\" --markdown @file.md" },
+        { "label": "更新文档", "value": "lark-cli docs +update --doc TOKEN --mode overwrite --markdown @file.md" },
+        { "label": "发消息", "value": "lark-cli im +messages-send --user-id \"ou_xxx\" --markdown \"内容\"" },
+        { "label": "查日程", "value": "lark-cli calendar +agenda" },
+        { "label": "搜用户", "value": "lark-cli contact +search-user --query \"姓名\"" }
+      ]
+    },
+    {
+      "group": "占位文本",
+      "items": [
+        { "label": "中文短句", "value": "在这里输入您的内容，我们将为您提供最优质的服务体验。" },
+        { "label": "中文段落", "value": "设计不仅仅是外观和感觉。设计是它如何工作的。好的设计是尽可能少的设计。少即是多，因为它专注于本质方面。回归基础，回归简洁。" },
+        { "label": "English Short", "value": "The quick brown fox jumps over the lazy dog." },
+        { "label": "English Paragraph", "value": "Design is not just what it looks like and feels like. Design is how it works. Good design is as little design as possible. Less, but better." }
+      ]
+    },
+    {
+      "group": "AI 提示词",
+      "items": [
+        { "label": "MJ 极简白底", "value": "minimal, clean, white background, soft shadow, modern design, studio lighting --ar 3:2 --v 6" },
+        { "label": "MJ 暗黑科技", "value": "dark tech UI, futuristic, neon glow, glass morphism, deep black background, cinematic --ar 16:9 --v 6" },
+        { "label": "MJ 扁平插画", "value": "flat illustration, vector style, pastel colors, simple shapes, geometric, minimal detail --ar 1:1 --v 6" },
+        { "label": "UI 截图风格", "value": "UI design, mobile app screenshot, iOS style, clean layout, light theme, high fidelity mockup" }
+      ]
+    },
+    {
+      "group": "CSS 常用片段",
+      "items": [
+        { "label": "Flex 居中", "value": "display: flex; align-items: center; justify-content: center;" },
+        { "label": "文字截断", "value": "overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" },
+        { "label": "毛玻璃", "value": "background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);" },
+        { "label": "平滑阴影", "value": "box-shadow: 0 4px 20px rgba(0,0,0,0.08);" }
       ]
     }
   ]
