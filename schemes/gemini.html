@@ -3,15 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DesignKit - Gemini 方案</title>
+<title>DesignKit</title>
 <link rel="stylesheet" href="gemini-style.css">
 </head>
 <body>
 <header class="header">
     <h1 class="logo">DesignKit</h1>
     <nav class="nav" id="nav"></nav>
+    <button class="edit-toggle" id="edit-toggle" onclick="toggleEditMode()" title="编辑模式">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
 </header>
+
 <main class="main" id="main"></main>
+
+<!-- Bottom Toolbar (edit mode) -->
+<div class="toolbar" id="toolbar">
+    <button class="toolbar-btn" onclick="exportData()">💾 导出配置</button>
+    <button class="toolbar-btn danger" onclick="resetData()">🔄 重置</button>
+</div>
+
+<!-- Card Modal -->
+<div class="modal-overlay" id="card-modal" onclick="closeCardModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="card-modal-title">添加链接</h3>
+            <button class="modal-close" onclick="closeCardModal()">✕</button>
+        </div>
+        <form onsubmit="submitCard(event)">
+            <div class="form-field"><label>名称</label><input type="text" id="cf-name" required></div>
+            <div class="form-field"><label>网址</label><input type="url" id="cf-url" required></div>
+            <div class="form-field"><label>描述</label><input type="text" id="cf-desc"></div>
+            <div class="form-field"><label>标签</label><input type="text" id="cf-tags" placeholder="逗号分隔"></div>
+            <input type="hidden" id="cf-cat-idx">
+            <input type="hidden" id="cf-sub-idx">
+            <input type="hidden" id="cf-item-idx">
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeCardModal()">取消</button>
+                <button type="submit" class="btn-submit" id="cf-btn">添加</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Item Modal (specs/copy) -->
+<div class="modal-overlay" id="item-modal" onclick="closeItemModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="item-modal-title">添加条目</h3>
+            <button class="modal-close" onclick="closeItemModal()">✕</button>
+        </div>
+        <form onsubmit="submitItem(event)">
+            <div class="form-field"><label>标签名</label><input type="text" id="if-label" required></div>
+            <div class="form-field"><label>内容/值</label><input type="text" id="if-value" required></div>
+            <input type="hidden" id="if-type">
+            <input type="hidden" id="if-group-idx">
+            <input type="hidden" id="if-item-idx">
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeItemModal()">取消</button>
+                <button type="submit" class="btn-submit" id="if-btn">添加</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Category Rename Modal -->
+<div class="modal-overlay" id="cat-modal" onclick="closeCatModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="cat-modal-title">重命名分类</h3>
+            <button class="modal-close" onclick="closeCatModal()">✕</button>
+        </div>
+        <form onsubmit="submitCatRename(event)">
+            <div class="form-field"><label>分类名称</label><input type="text" id="cat-name" required></div>
+            <input type="hidden" id="cat-idx">
+            <input type="hidden" id="cat-sub-idx">
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeCatModal()">取消</button>
+                <button type="submit" class="btn-submit">确定</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script src="gemini-app.js"></script>
 </body>
