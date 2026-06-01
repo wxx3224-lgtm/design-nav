@@ -28,6 +28,7 @@ async function init() {
             saveData();
         }
         render();
+        translateExistingCards();
     } catch (err) {
         document.getElementById('main').innerHTML = `<div class="error-state"><p>数据加载失败</p><p style="margin-top:0.5rem;font-size:0.8rem;">${err.message || '请检查网络连接后刷新页面'}</p></div>`;
     } finally {
@@ -420,6 +421,47 @@ function translateToZh(text) {
             return replaced;
         })
         .catch(function() { return replaced; });
+}
+
+function translateExistingCards() {
+    var dirty = false;
+    var promises = [];
+    data.links.forEach(function(cat) {
+        var allItems = [];
+        if (cat.subcategories) {
+            cat.subcategories.forEach(function(sub) { allItems = allItems.concat(sub.items || []); });
+        } else {
+            allItems = cat.items || [];
+        }
+        allItems.forEach(function(item) {
+            if (item._translated) return;
+            var nameIsEn = item.name && isEnglish(item.name);
+            var descIsEn = item.desc && isEnglish(item.desc);
+            if (!nameIsEn && !descIsEn) return;
+            dirty = true;
+            item._translated = true;
+            if (nameIsEn) {
+                item.name = item.name.replace(/\s*[·|／\-–—:]\s*.+$/, '').trim();
+            }
+            if (descIsEn) {
+                promises.push(
+                    translateToZh(item.desc).then(function(translated) {
+                        item.desc = translated.slice(0, 80);
+                    })
+                );
+            }
+        });
+    });
+    if (!dirty) return;
+    if (promises.length > 0) {
+        Promise.all(promises).then(function() {
+            saveData();
+            render();
+        });
+    } else {
+        saveData();
+        render();
+    }
 }
 
 function setupUrlAutoFetch() {
