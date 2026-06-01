@@ -117,7 +117,8 @@ function renderSpecs() {
             </span></h3>`;
         html += `<div class="dims-grid">`;
         group.items.forEach((item, ii) => {
-            html += `<div class="dim-item" onclick="copyToClipboard('${item.value}')">
+            const escaped = item.value.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+            html += `<div class="dim-item" data-copy="${escaped}" title="${item.label}: ${escaped}" onclick="copyFromData(this)">
                 <span class="dim-label">${item.label}</span>
                 <code class="dim-value">${item.value}</code>
                 <div class="item-edit-controls">
@@ -145,7 +146,8 @@ function renderCopy() {
         group.items.forEach((item, ii) => {
             const isColor = /^#[0-9A-Fa-f]{3,8}$/.test(item.value);
             const swatch = isColor ? `<span class="color-swatch" style="background:${item.value}"></span>` : '';
-            html += `<div class="copy-item" onclick="copyToClipboard(\`${item.value.replace(/`/g,'\\`')}\`)">
+            const escaped = item.value.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+            html += `<div class="copy-item" data-copy="${escaped}" title="${escaped}" onclick="copyFromData(this)">
                 <span class="copy-label">${swatch} ${item.label}</span>
                 <span class="copy-value">${item.value}</span>
                 <span class="copy-icon">⌘C</span>
@@ -677,6 +679,14 @@ function resetData() {
 }
 
 // ---- Utils ----
+function copyFromData(el) {
+    if (editMode) return;
+    var text = el.getAttribute('data-copy');
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(`已复制: ${text.length > 30 ? text.slice(0, 30) + '...' : text}`);
+    });
+}
+
 function copyToClipboard(text) {
     if (editMode) return;
     navigator.clipboard.writeText(text).then(() => {
