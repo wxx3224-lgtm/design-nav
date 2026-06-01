@@ -374,8 +374,53 @@ function openAddCard(ci, si) {
     document.getElementById('cf-url').focus();
 }
 
-// ---- URL Auto-fetch ----
+// ---- URL Auto-fetch & Translation ----
 let fetchController = null;
+
+const DESIGN_TERMS = {
+    'portfolio': '作品集', 'design system': '设计系统', 'mockup': '样机',
+    'wireframe': '线框图', 'prototype': '原型', 'typography': '字体排版',
+    'color palette': '色板', 'icon set': '图标集', 'ui kit': 'UI 套件',
+    'landing page': '落地页', 'dashboard': '仪表盘', 'illustration': '插画',
+    'gradient': '渐变', 'font': '字体', 'template': '模板',
+    'animation': '动效', 'interaction': '交互', 'component': '组件',
+    'layout': '布局', 'responsive': '响应式', 'accessibility': '无障碍',
+    'branding': '品牌设计', 'visual design': '视觉设计', 'user interface': '用户界面',
+    'user experience': '用户体验', 'design tool': '设计工具', 'asset': '素材',
+    'plugin': '插件', 'workflow': '工作流', 'collaboration': '协作',
+    'open source': '开源', 'free': '免费', 'premium': '付费',
+};
+
+function isEnglish(text) {
+    var ascii = text.replace(/[^a-zA-Z]/g, '').length;
+    return ascii / text.replace(/\s/g, '').length > 0.6;
+}
+
+function applyDesignTerms(text) {
+    var result = text;
+    Object.keys(DESIGN_TERMS).forEach(function(en) {
+        var re = new RegExp('\\b' + en + '\\b', 'gi');
+        result = result.replace(re, DESIGN_TERMS[en]);
+    });
+    return result;
+}
+
+function translateToZh(text) {
+    if (!text || !isEnglish(text)) return Promise.resolve(text);
+    var replaced = applyDesignTerms(text);
+    if (!isEnglish(replaced)) return Promise.resolve(replaced);
+    return fetch('https://api.mymemory.translated.net/get?q=' +
+        encodeURIComponent(text.slice(0, 200)) + '&langpair=en|zh-CN')
+        .then(function(res) { return res.json(); })
+        .then(function(json) {
+            if (json.responseStatus === 200 && json.responseData && json.responseData.translatedText) {
+                var translated = json.responseData.translatedText;
+                return applyDesignTerms(translated);
+            }
+            return replaced;
+        })
+        .catch(function() { return replaced; });
+}
 
 function setupUrlAutoFetch() {
     const urlInput = document.getElementById('cf-url');
@@ -400,13 +445,42 @@ function setupUrlAutoFetch() {
         })
         .then(function(res) { return res.json(); })
         .then(function(json) {
-            if (json.status === 'success' && json.data) {
-                if (!nameInput.value.trim() && json.data.title) {
-                    nameInput.value = json.data.title.slice(0, 50);
+            if (json.status !== 'success' || !json.data) return;
+            var title = json.data.title || '';
+            var desc = json.data.description || '';
+
+            if (!nameInput.value.trim() && title) {
+                nameInput.value = title.slice(0, 50);
+            }
+
+            if (!descInput.value.trim() && desc) {
+                if (isEnglish(desc)) {
+                    descInput.placeholder = '智能翻译中...';
+                    descInput.classList.add('fetching');
+                    translateToZh(desc.slice(0, 80)).then(function(translated) {
+                        if (!descInput.value.trim()) {
+                            descInput.value = translated.slice(0, 80);
+                        }
+                    }).finally(function() {
+                        descInput.placeholder = '一句话描述（可选）';
+                        descInput.classList.remove('fetching');
+                    });
+                } else {
+                    descInput.value = desc.slice(0, 80);
                 }
-                if (!descInput.value.trim() && json.data.description) {
-                    descInput.value = json.data.description.slice(0, 80);
-                }
+            }
+
+            if (!nameInput.value.trim()) return;
+            if (isEnglish(nameInput.value)) {
+                nameInput.placeholder = '智能翻译中...';
+                translateToZh(nameInput.value).then(function(translated) {
+                    if (nameInput.value === title.slice(0, 50)) {
+                        nameInput.value = translated.slice(0, 50);
+                    }
+                }).finally(function() {
+                    nameInput.placeholder = '网站名称';
+                    nameInput.classList.remove('fetching');
+                });
             }
         })
         .catch(function(e) {})
