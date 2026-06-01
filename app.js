@@ -442,12 +442,13 @@ function translateExistingCards() {
             allItems = cat.items || [];
         }
         allItems.forEach(function(item) {
-            if (item._translated) return;
+            if (item._trV2) return;
             var nameIsEn = item.name && isEnglish(item.name);
             var descIsEn = item.desc && isEnglish(item.desc);
             if (!nameIsEn && !descIsEn) return;
             dirty = true;
-            item._translated = true;
+            item._trV2 = true;
+            delete item._translated;
             if (nameIsEn && item.url) {
                 item.name = extractBrandName(item.url) || item.name;
             }
