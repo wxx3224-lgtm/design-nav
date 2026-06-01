@@ -409,7 +409,7 @@ function applyDesignTerms(text) {
 function extractBrandName(url) {
     try {
         var hostname = new URL(url).hostname.replace(/^www\./, '');
-        var name = hostname.split('.')[0];
+        var name = hostname.replace(/\.(com|net|org|io|co|ai|dev|design|space|site|app|me|xyz|info|cc).*$/, '');
         return name.charAt(0).toUpperCase() + name.slice(1);
     } catch(e) { return ''; }
 }
@@ -477,18 +477,35 @@ function setupUrlAutoFetch() {
     const urlInput = document.getElementById('cf-url');
     const nameInput = document.getElementById('cf-name');
     const descInput = document.getElementById('cf-desc');
+    let userEditedName = false;
+    let userEditedDesc = false;
+
+    nameInput.addEventListener('input', function() { userEditedName = true; });
+    descInput.addEventListener('input', function() { userEditedDesc = true; });
+
+    function getCleanBrandName(url, publisher) {
+        if (publisher && publisher.length < 10 && !/\s/.test(publisher)) {
+            return publisher;
+        }
+        return extractBrandName(url);
+    }
 
     function handleUrlChange() {
         const url = urlInput.value.trim();
         if (!url || !url.startsWith('http')) return;
-        if (nameInput.value.trim() && descInput.value.trim()) return;
+
+        userEditedName = !!nameInput.value.trim();
+        userEditedDesc = !!descInput.value.trim();
+        if (userEditedName && userEditedDesc) return;
 
         if (fetchController) fetchController.abort();
         fetchController = new AbortController();
 
-        nameInput.placeholder = '正在智能抓取网站信息...';
+        if (!userEditedName) {
+            nameInput.value = extractBrandName(url);
+            nameInput.classList.remove('fetching');
+        }
         descInput.placeholder = '正在智能抓取网站信息...';
-        nameInput.classList.add('fetching');
         descInput.classList.add('fetching');
 
         fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`, {
@@ -497,20 +514,19 @@ function setupUrlAutoFetch() {
         .then(function(res) { return res.json(); })
         .then(function(json) {
             if (json.status !== 'success' || !json.data) return;
-            var desc = json.data.description || '';
             var publisher = json.data.publisher || '';
+            var desc = json.data.description || '';
 
-            if (!nameInput.value.trim()) {
-                var name = publisher || extractBrandName(url);
-                nameInput.value = name.slice(0, 50);
+            if (!userEditedName) {
+                nameInput.value = getCleanBrandName(url, publisher);
             }
 
-            if (!descInput.value.trim() && desc) {
+            if (!userEditedDesc && desc) {
                 if (isEnglish(desc)) {
                     descInput.placeholder = '智能翻译中...';
                     descInput.classList.add('fetching');
                     translateToZh(desc.slice(0, 80)).then(function(translated) {
-                        if (!descInput.value.trim()) {
+                        if (!userEditedDesc) {
                             descInput.value = translated.slice(0, 80);
                         }
                     }).finally(function() {
@@ -518,15 +534,13 @@ function setupUrlAutoFetch() {
                         descInput.classList.remove('fetching');
                     });
                 } else {
-                    descInput.value = desc.slice(0, 80);
+                    if (!userEditedDesc) descInput.value = desc.slice(0, 80);
                 }
             }
         })
         .catch(function(e) {})
         .finally(function() {
-            nameInput.placeholder = '网站名称';
             descInput.placeholder = '一句话描述（可选）';
-            nameInput.classList.remove('fetching');
             descInput.classList.remove('fetching');
             fetchController = null;
         });
