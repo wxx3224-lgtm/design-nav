@@ -58,6 +58,7 @@ function renderMain() {
 function renderLinks() {
     let html = `<section class="section" id="section-0"><h2 class="section-title">常用网站</h2>`;
     data.links.forEach((cat, ci) => {
+        html += `<div class="cat-section" data-cat-idx="${ci}">`;
         if (cat.subcategories) {
             cat.subcategories.forEach((sub, si) => {
                 html += renderSubtitle(`${cat.category} · ${sub.name}`, ci, si);
@@ -71,6 +72,7 @@ function renderLinks() {
             (cat.items || []).forEach((item, ii) => { html += renderCard(item, ci, null, ii); });
             html += `<div class="card-add" onclick="openAddCard(${ci},null)">+ 新增链接</div></div>`;
         }
+        html += `</div>`;
     });
     html += `<button class="add-category-btn" onclick="addCategory()">+ 新增分类</button>`;
     html += `</section>`;
@@ -80,8 +82,7 @@ function renderLinks() {
 function renderSubtitle(text, ci, si) {
     const idx = String(ci + 1).padStart(2, '0');
     const displayText = si === null ? `${idx} / ${text}` : text;
-    const dragAttr = si === null ? `draggable="true" data-cat-drag="${ci}"` : '';
-    return `<h3 class="section-subtitle" ${dragAttr}>
+    return `<h3 class="section-subtitle">
         <span>${displayText}</span>
         <span class="subtitle-actions">
             <button class="subtitle-btn" onclick="renameCat(${ci},${si === null ? 'null' : si})" title="重命名">✏️</button>
@@ -172,8 +173,7 @@ function toggleEditMode() {
 
 // ---- Drag & Drop ----
 let dragItem = null;
-let dragType = null; // 'card' or 'category'
-let placeholder = null;
+let dragType = null;
 
 function setupDragAndDrop() {
     // Card drag
@@ -184,13 +184,14 @@ function setupDragAndDrop() {
         card.addEventListener('dragleave', onCardDragLeave);
         card.addEventListener('drop', onCardDrop);
     });
-    // Category drag
-    document.querySelectorAll('[data-cat-drag]').forEach(function(el) {
-        el.addEventListener('dragstart', onCatDragStart);
-        el.addEventListener('dragend', onCatDragEnd);
-        el.addEventListener('dragover', onCatDragOver);
-        el.addEventListener('dragleave', onCatDragLeave);
-        el.addEventListener('drop', onCatDrop);
+    // Section drag
+    document.querySelectorAll('.cat-section').forEach(function(sec) {
+        sec.setAttribute('draggable', 'true');
+        sec.addEventListener('dragstart', onSectionDragStart);
+        sec.addEventListener('dragend', onSectionDragEnd);
+        sec.addEventListener('dragover', onSectionDragOver);
+        sec.addEventListener('dragleave', onSectionDragLeave);
+        sec.addEventListener('drop', onSectionDrop);
     });
 }
 
@@ -202,18 +203,20 @@ function destroyDragAndDrop() {
         card.removeEventListener('dragleave', onCardDragLeave);
         card.removeEventListener('drop', onCardDrop);
     });
-    document.querySelectorAll('[data-cat-drag]').forEach(function(el) {
-        el.removeEventListener('dragstart', onCatDragStart);
-        el.removeEventListener('dragend', onCatDragEnd);
-        el.removeEventListener('dragover', onCatDragOver);
-        el.removeEventListener('dragleave', onCatDragLeave);
-        el.removeEventListener('drop', onCatDrop);
+    document.querySelectorAll('.cat-section').forEach(function(sec) {
+        sec.removeAttribute('draggable');
+        sec.removeEventListener('dragstart', onSectionDragStart);
+        sec.removeEventListener('dragend', onSectionDragEnd);
+        sec.removeEventListener('dragover', onSectionDragOver);
+        sec.removeEventListener('dragleave', onSectionDragLeave);
+        sec.removeEventListener('drop', onSectionDrop);
     });
 }
 
 // Card sorting within same category
 function onCardDragStart(e) {
     if (!editMode) { e.preventDefault(); return; }
+    e.stopPropagation();
     dragItem = this;
     dragType = 'card';
     this.classList.add('dragging');
@@ -265,41 +268,46 @@ function onCardDrop(e) {
     showToast('排序已更新');
 }
 
-// Category sorting
-function onCatDragStart(e) {
+// Section sorting (entire category block)
+function onSectionDragStart(e) {
     if (!editMode) { e.preventDefault(); return; }
+    var target = e.target;
+    var fromTitle = target.closest('.section-subtitle');
+    if (!fromTitle && target !== this) { return; }
     dragItem = this;
-    dragType = 'category';
-    this.classList.add('dragging');
+    dragType = 'section';
+    this.classList.add('section-dragging');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', '');
 }
 
-function onCatDragEnd() {
-    this.classList.remove('dragging');
-    document.querySelectorAll('.cat-drag-over').forEach(function(el) { el.classList.remove('cat-drag-over'); });
+function onSectionDragEnd() {
+    this.classList.remove('section-dragging');
+    document.querySelectorAll('.section-drag-over').forEach(function(el) { el.classList.remove('section-drag-over'); });
     dragItem = null;
     dragType = null;
 }
 
-function onCatDragOver(e) {
+function onSectionDragOver(e) {
+    if (dragType !== 'section' || this === dragItem) return;
     e.preventDefault();
-    if (dragType !== 'category' || this === dragItem) return;
     e.dataTransfer.dropEffect = 'move';
-    this.classList.add('cat-drag-over');
+    this.classList.add('section-drag-over');
 }
 
-function onCatDragLeave() {
-    this.classList.remove('cat-drag-over');
+function onSectionDragLeave(e) {
+    if (!this.contains(e.relatedTarget)) {
+        this.classList.remove('section-drag-over');
+    }
 }
 
-function onCatDrop(e) {
+function onSectionDrop(e) {
     e.preventDefault();
-    this.classList.remove('cat-drag-over');
-    if (!dragItem || dragType !== 'category' || this === dragItem) return;
+    this.classList.remove('section-drag-over');
+    if (!dragItem || dragType !== 'section' || this === dragItem) return;
 
-    var fromIdx = parseInt(dragItem.dataset.catDrag);
-    var toIdx = parseInt(this.dataset.catDrag);
+    var fromIdx = parseInt(dragItem.dataset.catIdx);
+    var toIdx = parseInt(this.dataset.catIdx);
 
     var moved = data.links.splice(fromIdx, 1)[0];
     data.links.splice(toIdx, 0, moved);

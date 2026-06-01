@@ -65,10 +65,15 @@ body.edit-mode .edit-toggle { background: #1a1a1a; color: #fff; border-color: #1
 }
 .subtitle-actions { display: none; gap: 0.3rem; }
 body.edit-mode .subtitle-actions { display: flex; }
-body.edit-mode .section-subtitle[draggable] { cursor: grab; }
-body.edit-mode .section-subtitle[draggable]:active { cursor: grabbing; }
-.section-subtitle.dragging { opacity: 0.4; }
-.section-subtitle.cat-drag-over { border-bottom: 2px dashed #999; padding-bottom: 0.5rem; }
+body.edit-mode .cat-section[draggable] { cursor: grab; }
+body.edit-mode .cat-section[draggable]:active { cursor: grabbing; }
+
+/* Section drag states */
+.cat-section { transition: opacity 0.2s, transform 0.2s; }
+.cat-section.section-dragging { opacity: 0.4; transform: scale(0.98); }
+.cat-section.section-drag-over {
+    border-top: 2px dashed #bbb; padding-top: 1rem; margin-top: -2px;
+}
 .subtitle-btn {
     width: 20px; height: 20px; border: none; background: none;
     cursor: pointer; font-size: 0.7rem; color: #bbb; border-radius: 4px;
