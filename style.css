@@ -65,6 +65,10 @@ body.edit-mode .edit-toggle { background: #1a1a1a; color: #fff; border-color: #1
 }
 .subtitle-actions { display: none; gap: 0.3rem; }
 body.edit-mode .subtitle-actions { display: flex; }
+body.edit-mode .section-subtitle[draggable] { cursor: grab; }
+body.edit-mode .section-subtitle[draggable]:active { cursor: grabbing; }
+.section-subtitle.dragging { opacity: 0.4; }
+.section-subtitle.cat-drag-over { border-bottom: 2px dashed #999; padding-bottom: 0.5rem; }
 .subtitle-btn {
     width: 20px; height: 20px; border: none; background: none;
     cursor: pointer; font-size: 0.7rem; color: #bbb; border-radius: 4px;
@@ -83,6 +87,10 @@ body.edit-mode .subtitle-actions { display: flex; }
     border: 1px solid transparent; position: relative;
 }
 .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); border-color: #eee; }
+.card.dragging { opacity: 0.4; transform: scale(0.95); transition: all 0.15s; }
+.card.drag-over { border: 2px dashed #ccc; transform: scale(1.02); background: #fcfcfc; }
+body.edit-mode .card[draggable] { cursor: grab; }
+body.edit-mode .card[draggable]:active { cursor: grabbing; }
 .card-icon { width: 36px; height: 36px; border-radius: 10px; margin-bottom: 0.8rem; object-fit: cover; }
 .card-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
 .card-desc { font-size: 0.8rem; color: #888; }

@@ -61,13 +61,13 @@ function renderLinks() {
         if (cat.subcategories) {
             cat.subcategories.forEach((sub, si) => {
                 html += renderSubtitle(`${cat.category} · ${sub.name}`, ci, si);
-                html += `<div class="cards-grid">`;
+                html += `<div class="cards-grid" data-cat="${ci}" data-sub="${si}">`;
                 sub.items.forEach((item, ii) => { html += renderCard(item, ci, si, ii); });
                 html += `<div class="card-add" onclick="openAddCard(${ci},${si})">+ 新增链接</div></div>`;
             });
         } else {
             html += renderSubtitle(cat.category, ci, null);
-            html += `<div class="cards-grid">`;
+            html += `<div class="cards-grid" data-cat="${ci}">`;
             (cat.items || []).forEach((item, ii) => { html += renderCard(item, ci, null, ii); });
             html += `<div class="card-add" onclick="openAddCard(${ci},null)">+ 新增链接</div></div>`;
         }
@@ -80,7 +80,8 @@ function renderLinks() {
 function renderSubtitle(text, ci, si) {
     const idx = String(ci + 1).padStart(2, '0');
     const displayText = si === null ? `${idx} / ${text}` : text;
-    return `<h3 class="section-subtitle">
+    const dragAttr = si === null ? `draggable="true" data-cat-drag="${ci}"` : '';
+    return `<h3 class="section-subtitle" ${dragAttr}>
         <span>${displayText}</span>
         <span class="subtitle-actions">
             <button class="subtitle-btn" onclick="renameCat(${ci},${si === null ? 'null' : si})" title="重命名">✏️</button>
@@ -92,7 +93,7 @@ function renderSubtitle(text, ci, si) {
 function renderCard(item, ci, si, ii) {
     const domain = (() => { try { return new URL(item.url).hostname; } catch(e) { return ''; } })();
     const favicon = domain ? `https://favicon.im/${domain}` : '';
-    return `<a href="${item.url}" target="_blank" rel="noopener" class="card">
+    return `<a href="${item.url}" target="_blank" rel="noopener" class="card" draggable="true" data-ci="${ci}" data-si="${si !== null ? si : ''}" data-ii="${ii}">
         ${favicon ? `<img src="${favicon}" class="card-icon" alt="" onerror="this.style.display='none'">` : ''}
         <div class="card-name">${item.name}</div>
         <div class="card-desc">${item.desc || ''}</div>
@@ -162,6 +163,151 @@ function renderCopy() {
 function toggleEditMode() {
     editMode = !editMode;
     document.body.classList.toggle('edit-mode', editMode);
+    if (editMode) {
+        setupDragAndDrop();
+    } else {
+        destroyDragAndDrop();
+    }
+}
+
+// ---- Drag & Drop ----
+let dragItem = null;
+let dragType = null; // 'card' or 'category'
+let placeholder = null;
+
+function setupDragAndDrop() {
+    // Card drag
+    document.querySelectorAll('.card[draggable]').forEach(function(card) {
+        card.addEventListener('dragstart', onCardDragStart);
+        card.addEventListener('dragend', onCardDragEnd);
+        card.addEventListener('dragover', onCardDragOver);
+        card.addEventListener('dragleave', onCardDragLeave);
+        card.addEventListener('drop', onCardDrop);
+    });
+    // Category drag
+    document.querySelectorAll('[data-cat-drag]').forEach(function(el) {
+        el.addEventListener('dragstart', onCatDragStart);
+        el.addEventListener('dragend', onCatDragEnd);
+        el.addEventListener('dragover', onCatDragOver);
+        el.addEventListener('dragleave', onCatDragLeave);
+        el.addEventListener('drop', onCatDrop);
+    });
+}
+
+function destroyDragAndDrop() {
+    document.querySelectorAll('.card[draggable]').forEach(function(card) {
+        card.removeEventListener('dragstart', onCardDragStart);
+        card.removeEventListener('dragend', onCardDragEnd);
+        card.removeEventListener('dragover', onCardDragOver);
+        card.removeEventListener('dragleave', onCardDragLeave);
+        card.removeEventListener('drop', onCardDrop);
+    });
+    document.querySelectorAll('[data-cat-drag]').forEach(function(el) {
+        el.removeEventListener('dragstart', onCatDragStart);
+        el.removeEventListener('dragend', onCatDragEnd);
+        el.removeEventListener('dragover', onCatDragOver);
+        el.removeEventListener('dragleave', onCatDragLeave);
+        el.removeEventListener('drop', onCatDrop);
+    });
+}
+
+// Card sorting within same category
+function onCardDragStart(e) {
+    if (!editMode) { e.preventDefault(); return; }
+    dragItem = this;
+    dragType = 'card';
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+}
+
+function onCardDragEnd() {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.drag-over').forEach(function(el) { el.classList.remove('drag-over'); });
+    dragItem = null;
+    dragType = null;
+}
+
+function onCardDragOver(e) {
+    e.preventDefault();
+    if (dragType !== 'card' || this === dragItem || this.classList.contains('card-add')) return;
+    e.dataTransfer.dropEffect = 'move';
+    this.classList.add('drag-over');
+}
+
+function onCardDragLeave() {
+    this.classList.remove('drag-over');
+}
+
+function onCardDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    if (!dragItem || dragType !== 'card' || this === dragItem) return;
+
+    var fromCi = parseInt(dragItem.dataset.ci);
+    var fromSi = dragItem.dataset.si !== '' ? parseInt(dragItem.dataset.si) : null;
+    var fromIi = parseInt(dragItem.dataset.ii);
+    var toCi = parseInt(this.dataset.ci);
+    var toSi = this.dataset.si !== '' ? parseInt(this.dataset.si) : null;
+    var toIi = parseInt(this.dataset.ii);
+
+    // Only allow within same category grid
+    if (fromCi !== toCi || fromSi !== toSi) return;
+
+    var items = fromSi !== null ? data.links[fromCi].subcategories[fromSi].items : data.links[fromCi].items;
+    var moved = items.splice(fromIi, 1)[0];
+    var insertAt = toIi > fromIi ? toIi : toIi;
+    items.splice(insertAt, 0, moved);
+
+    saveData();
+    render();
+    if (editMode) setupDragAndDrop();
+    showToast('排序已更新');
+}
+
+// Category sorting
+function onCatDragStart(e) {
+    if (!editMode) { e.preventDefault(); return; }
+    dragItem = this;
+    dragType = 'category';
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+}
+
+function onCatDragEnd() {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.cat-drag-over').forEach(function(el) { el.classList.remove('cat-drag-over'); });
+    dragItem = null;
+    dragType = null;
+}
+
+function onCatDragOver(e) {
+    e.preventDefault();
+    if (dragType !== 'category' || this === dragItem) return;
+    e.dataTransfer.dropEffect = 'move';
+    this.classList.add('cat-drag-over');
+}
+
+function onCatDragLeave() {
+    this.classList.remove('cat-drag-over');
+}
+
+function onCatDrop(e) {
+    e.preventDefault();
+    this.classList.remove('cat-drag-over');
+    if (!dragItem || dragType !== 'category' || this === dragItem) return;
+
+    var fromIdx = parseInt(dragItem.dataset.catDrag);
+    var toIdx = parseInt(this.dataset.catDrag);
+
+    var moved = data.links.splice(fromIdx, 1)[0];
+    data.links.splice(toIdx, 0, moved);
+
+    saveData();
+    render();
+    if (editMode) setupDragAndDrop();
+    showToast('分类排序已更新');
 }
 
 // ---- Category CRUD ----
