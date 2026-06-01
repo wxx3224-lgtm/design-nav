@@ -38,8 +38,37 @@
 <main class="main" id="main"></main>
 
 <div class="toolbar" id="toolbar">
+    <button class="toolbar-btn" onclick="openBatchImport()">📥 批量导入</button>
     <button class="toolbar-btn" onclick="exportData()">💾 导出配置</button>
     <button class="toolbar-btn danger" onclick="resetData()">🔄 重置</button>
+</div>
+
+<!-- Batch Import Modal -->
+<div class="modal-overlay" id="batch-modal" onclick="closeBatchModal(event)">
+    <div class="modal modal-wide" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>批量导入</h3>
+            <button class="modal-close" onclick="closeBatchModal()">✕</button>
+        </div>
+        <div class="form-field">
+            <label>目标分类</label>
+            <select id="batch-cat" class="form-select">
+            </select>
+        </div>
+        <div class="form-field" id="batch-newcat-field" style="display:none">
+            <label>新分类名称</label>
+            <input type="text" id="batch-newcat" placeholder="输入新分类名称">
+        </div>
+        <div class="form-field">
+            <label>网址列表（每行一个 URL）</label>
+            <textarea id="batch-urls" class="form-textarea" rows="8" placeholder="https://example.com&#10;https://another.site&#10;..."></textarea>
+        </div>
+        <div class="batch-status" id="batch-status"></div>
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeBatchModal()">取消</button>
+            <button type="button" class="btn-submit" id="batch-btn" onclick="executeBatchImport()">开始导入</button>
+        </div>
+    </div>
 </div>
 
 <!-- Card Modal -->

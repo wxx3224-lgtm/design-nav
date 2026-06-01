@@ -702,4 +702,110 @@ window.addEventListener('scroll', () => {
     links.forEach((l, i) => l.classList.toggle('active', i === current));
 });
 
+// ---- Batch Import ----
+function openBatchImport() {
+    var select = document.getElementById('batch-cat');
+    var options = '';
+    data.links.forEach(function(cat, i) {
+        options += `<option value="${i}">${cat.category}</option>`;
+    });
+    options += '<option value="__new__">+ 创建新分类</option>';
+    select.innerHTML = options;
+    select.onchange = function() {
+        document.getElementById('batch-newcat-field').style.display =
+            this.value === '__new__' ? '' : 'none';
+    };
+    document.getElementById('batch-newcat-field').style.display = 'none';
+    document.getElementById('batch-newcat').value = '';
+    document.getElementById('batch-urls').value = '';
+    document.getElementById('batch-status').textContent = '';
+    document.getElementById('batch-btn').classList.remove('loading');
+    document.getElementById('batch-btn').textContent = '开始导入';
+    document.getElementById('batch-modal').classList.add('show');
+}
+
+function closeBatchModal(e) {
+    if (e && e.target !== e.currentTarget) return;
+    document.getElementById('batch-modal').classList.remove('show');
+}
+
+function executeBatchImport() {
+    var catVal = document.getElementById('batch-cat').value;
+    var catIdx;
+    if (catVal === '__new__') {
+        var newName = document.getElementById('batch-newcat').value.trim();
+        if (!newName) { showToast('请输入新分类名称'); return; }
+        data.links.push({ category: newName, items: [] });
+        catIdx = data.links.length - 1;
+    } else {
+        catIdx = parseInt(catVal);
+    }
+
+    var raw = document.getElementById('batch-urls').value.trim();
+    var urls = raw.split('\n').map(function(l) { return l.trim(); })
+        .filter(function(l) { return l.startsWith('http'); });
+    if (urls.length === 0) { showToast('未检测到有效 URL'); return; }
+
+    var btn = document.getElementById('batch-btn');
+    var status = document.getElementById('batch-status');
+    btn.classList.add('loading');
+    btn.textContent = '导入中...';
+
+    var items = data.links[catIdx].items || [];
+    if (!data.links[catIdx].items) data.links[catIdx].items = items;
+
+    var cards = urls.map(function(url) {
+        return { name: extractBrandName(url), url: url, desc: '', tags: [] };
+    });
+    cards.forEach(function(c) { items.push(c); });
+    saveData(); render();
+    if (editMode) setupDragAndDrop();
+
+    status.textContent = `已导入 ${cards.length} 个网站，正在后台补充简介...`;
+
+    var queue = cards.slice();
+    var done = 0;
+    var total = queue.length;
+
+    function processNext() {
+        if (queue.length === 0) {
+            status.textContent = `全部完成！已导入 ${total} 个网站`;
+            btn.classList.remove('loading');
+            btn.textContent = '完成';
+            setTimeout(function() { closeBatchModal(); }, 1200);
+            return;
+        }
+        var card = queue.shift();
+        fetch('https://api.microlink.io/?url=' + encodeURIComponent(card.url))
+            .then(function(r) { return r.json(); })
+            .then(function(json) {
+                if (json.status === 'success' && json.data) {
+                    var publisher = json.data.publisher || '';
+                    if (publisher && publisher.length < 10 && !/\s/.test(publisher)) {
+                        card.name = publisher;
+                    }
+                    var desc = json.data.description || '';
+                    if (desc) {
+                        if (isEnglish(desc)) {
+                            return translateToZh(desc.slice(0, 80)).then(function(t) {
+                                card.desc = t.slice(0, 80);
+                            });
+                        } else {
+                            card.desc = desc.slice(0, 80);
+                        }
+                    }
+                }
+            })
+            .catch(function() {})
+            .finally(function() {
+                done++;
+                status.textContent = `已导入 ${total} 个网站，正在补充简介... [${done}/${total}]`;
+                saveData(); render();
+                if (editMode) setupDragAndDrop();
+                setTimeout(processNext, 500);
+            });
+    }
+    processNext();
+}
+
 init();
