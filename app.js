@@ -406,6 +406,14 @@ function applyDesignTerms(text) {
     return result;
 }
 
+function extractBrandName(url) {
+    try {
+        var hostname = new URL(url).hostname.replace(/^www\./, '');
+        var name = hostname.split('.')[0];
+        return name.charAt(0).toUpperCase() + name.slice(1);
+    } catch(e) { return ''; }
+}
+
 function translateToZh(text) {
     if (!text || !isEnglish(text)) return Promise.resolve(text);
     var replaced = applyDesignTerms(text);
@@ -440,8 +448,8 @@ function translateExistingCards() {
             if (!nameIsEn && !descIsEn) return;
             dirty = true;
             item._translated = true;
-            if (nameIsEn) {
-                item.name = item.name.replace(/\s*[·|／\-–—:]\s*.+$/, '').trim();
+            if (nameIsEn && item.url) {
+                item.name = extractBrandName(item.url) || item.name;
             }
             if (descIsEn) {
                 promises.push(
@@ -488,11 +496,12 @@ function setupUrlAutoFetch() {
         .then(function(res) { return res.json(); })
         .then(function(json) {
             if (json.status !== 'success' || !json.data) return;
-            var title = json.data.title || '';
             var desc = json.data.description || '';
+            var publisher = json.data.publisher || '';
 
-            if (!nameInput.value.trim() && title) {
-                nameInput.value = title.slice(0, 50);
+            if (!nameInput.value.trim()) {
+                var name = publisher || extractBrandName(url);
+                nameInput.value = name.slice(0, 50);
             }
 
             if (!descInput.value.trim() && desc) {
@@ -510,19 +519,6 @@ function setupUrlAutoFetch() {
                 } else {
                     descInput.value = desc.slice(0, 80);
                 }
-            }
-
-            if (!nameInput.value.trim()) return;
-            if (isEnglish(nameInput.value)) {
-                nameInput.placeholder = '智能翻译中...';
-                translateToZh(nameInput.value).then(function(translated) {
-                    if (nameInput.value === title.slice(0, 50)) {
-                        nameInput.value = translated.slice(0, 50);
-                    }
-                }).finally(function() {
-                    nameInput.placeholder = '网站名称';
-                    nameInput.classList.remove('fetching');
-                });
             }
         })
         .catch(function(e) {})
